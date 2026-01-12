@@ -1,4 +1,4 @@
-# 2017-StatRoller
+# 2017 RPG Stat Roller
 
 Static, dependency-free RPG ability score rollers with a shared UI layer. Each variant keeps its rule logic inline per page, while design + interaction patterns are centralized in a small, reusable UI bundle.
 
