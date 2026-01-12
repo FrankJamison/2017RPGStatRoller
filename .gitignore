@@ -1,5 +1,8 @@
 .vscode/
 
+# Local python env (one-off tooling)
+.venv/
+
 # OS cruft
 .DS_Store
 Thumbs.db

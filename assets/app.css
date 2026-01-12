@@ -122,6 +122,13 @@ a {
             color-mix(in srgb, var(--brand-2) 25%, transparent));
 }
 
+.brand-badge img {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
 .nav {
     display: flex;
     align-items: center;
@@ -294,7 +301,7 @@ main {
     object-fit: contain;
     border-radius: 12px;
     border: 1px solid var(--border);
-    background: color-mix(in srgb, var(--bg) 80%, transparent);
+    background: transparent;
 }
 
 .roll-button .roll-title {
