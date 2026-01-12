@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Frank Jamison's Stat Roller</title>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="assets/app.css">
+    <script defer src="assets/app.js"></script>
+
+    <script>
+        /* Calculate a stat from the die rolls */
+        function calculateStat(dieRollArray) {
+
+            var numRolls = dieRollArray.length; // Number of dice rolled
+            var lowestRoll = 19; // Lowest die roll
+            var calculatedStat = 0; // Calculated Stat
+
+            // Sum die rolls and determine lowest roll
+            for (j = 0; j < numRolls; j++) {
+                if (dieRollArray[j] < lowestRoll) {
+                    lowestRoll = dieRollArray[j];
+                }
+
+                // Add die roll to calculated stat
+                calculatedStat += dieRollArray[j];
+            }
+
+            // Remove lowest roll from calculated stat
+            calculatedStat -= lowestRoll;
+
+            /* If the calculated stat is < 7, reset variables for next cycle */
+            if (calculatedStat < 7) {
+                calculatedStat = 0;
+                lowestRoll = 19;
+            }
+
+            // Return calculared stat
+            return calculatedStat;
+        }
+
+        /* Generate random die roll */
+        function getDieRoll(dType) {
+
+            var roll = 1; // Roll value
+
+            // Calculate random number between 1 and dType and re-roll ones
+            while (roll == 1) {
+                roll = Math.floor(Math.random() * dType) + 1;
+            }
+
+            /* Return die roll */
+            return roll;
+
+        }
+
+        /* Sort stats array */
+        function sortStats(arrayOfStats) {
+
+            // Numeric sort, high -> low
+            arrayOfStats.sort(function(a, b) {
+                return b - a;
+            });
+
+            return arrayOfStats;
+        }
+
+        /* Get a valid ability stat */
+        function getStat() {
+
+            var dieRoll = []; // Dice rolls
+            var stat = 0; // Current Stat Value
+
+            // Get random numbers
+            while (stat == 0) {
+
+                // Roll 4d6
+                for (var i = 0; i < 4; i++) {
+                    dieRoll[i] = getDieRoll(6);
+                }
+
+                // Calculate stat
+                stat = calculateStat(dieRoll);
+            }
+
+            // Return valid stat
+            return stat;
+        }
+
+        /* Get current point buy value */
+        function getPoints(orderedStatArray) {
+
+            var pointBuy = 0; // Point Buy Value
+
+            // Calculate point buy value
+            for (i = 0; i < 6; i++) {
+
+                // Calculate Points for Stat
+                switch (orderedStatArray[i]) {
+                    case 18:
+                        pointBuy += 17;
+                        break;
+
+                    case 17:
+                        pointBuy += 13;
+                        break;
+
+                    case 16:
+                        pointBuy += 10;
+                        break;
+
+                    case 15:
+                        pointBuy += 7;
+                        break;
+
+                    case 14:
+                        pointBuy += 5;
+                        break;
+
+                    case 13:
+                        pointBuy += 3;
+                        break;
+
+                    case 12:
+                        pointBuy += 2;
+                        break;
+
+                    case 11:
+                        pointBuy += 1;
+                        break;
+
+                    case 10:
+                        pointBuy += 0;
+                        break;
+
+                    case 9:
+                        pointBuy += -1;
+                        break;
+
+                    case 8:
+                        pointBuy += -2;
+                        break;
+
+                    case 7:
+                        pointBuy += -4;
+                        break;
+
+                    default:
+                        pointBuy += 0;
+                }
+            }
+
+            // Return point buy value
+            return pointBuy;
+        }
+
+        /* Roll character stats */
+        function rollStats(points) {
+
+            function nowMs() {
+                if (window.performance && typeof window.performance.now === 'function') {
+                    return window.performance.now();
+                }
+                return Date.now();
+            }
+
+            var startedAt = nowMs();
+
+            var minPointBuy = points; // Minimum Point Buy
+            var statsArray = []; // Final Stat Array
+            var curStatPoints = 0; // Current Stat Points
+            var lowestStat = 19; // Lowest Stat
+            var lowestStatIndex = 0; // Lowest Stat Index in statsArray
+
+            // Get stat and compare to lowest
+            for (i = 0; i < 7; i++) {
+                statsArray[i] = getStat();
+
+                // Compare and update lowest stat and lowest stat index
+                if (statsArray[i] < lowestStat) {
+                    lowestStat = statsArray[i];
+                    lowestStatIndex = i;
+                }
+            }
+
+            // Remove lowest stat from stats array
+            statsArray.splice(lowestStatIndex, 1);
+
+            // Sort Stats
+            statsArray = sortStats(statsArray);
+
+            // Calculate Current Stat Points
+            curStatPoints = getPoints(statsArray);
+
+            var elapsed = nowMs() - startedAt;
+
+            if (window.StatRollerUI && typeof window.StatRollerUI.showResult === 'function') {
+                window.StatRollerUI.showResult({
+                    stats: statsArray,
+                    pointBuy: curStatPoints,
+                    attempts: 1,
+                    ms: elapsed,
+                    variant: "Classic (7 Stats, Drop Lowest)"
+                });
+            } else {
+                alert(statsArray[0] + ", " + statsArray[1] + ", " + statsArray[2] + ", " + statsArray[3] + ", " + statsArray[4] + ", " + statsArray[5] + ' Point Buy: ' + curStatPoints);
+            }
+        }
+    </script>
+</head>
+
+<body data-roll-fn="rollStats" data-roll-args="0">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="app-header">
+        <div class="container header-inner">
+            <a class="brand" href="index.html">
+                <span class="brand-badge" aria-hidden="true">d20</span>
+                <span>Stat Roller</span>
+            </a>
+
+            <nav class="nav" aria-label="Pages">
+                <a href="index.html">Classic</a>
+                <a href="stat-roller-dnd5e.html">D&amp;D 5e</a>
+                <a href="stat-roller-min-10.html">Pathfinder</a>
+                <a href="stat-roller-caedis-cauldron.html">Caedi's Cauldron</a>
+            </nav>
+
+            <div class="header-actions">
+                <button class="btn" id="themeToggle" type="button" aria-pressed="false">Dark</button>
+            </div>
+        </div>
+    </header>
+
+    <main id="main">
+        <div class="container">
+            <section class="hero">
+                <h1>Classic Stat Roller</h1>
+                <p>Roll 7 ability scores (4d6, drop the lowest die, re-roll 1s), drop the lowest stat, sort high→low, and compute a point-buy style total.</p>
+            </section>
+
+            <div class="grid">
+                <section class="card">
+                    <h2>Roll</h2>
+                    <div class="roll-area">
+                        <button class="roll-button" id="rollBtn" type="button">
+                            <img src="images/critical-hit-d20.gif" alt="" aria-hidden="true">
+                            <div>
+                                <div class="roll-title">Roll Ability Scores</div>
+                                <div class="roll-sub">Click to roll, or press <span class="kbd">R</span> · <span class="kbd">C</span> copy · <span class="kbd">X</span> clear</div>
+                            </div>
+                        </button>
+                        <div class="actions" aria-label="Roll actions">
+                            <button class="btn btn-primary" id="copyBtn" type="button" disabled>Copy</button>
+                            <button class="btn" id="clearBtn" type="button">Clear</button>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="stack">
+                    <section class="card">
+                        <h2>Latest Roll</h2>
+                        <div id="results" class="results">
+                            <p class="small">No rolls yet. Click “Roll Ability Scores”.</p>
+                        </div>
+                    </section>
+
+                    <section class="card history">
+                        <h2>History</h2>
+                        <ul id="historyList" class="history-list"></ul>
+                    </section>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <div class="container">
+            <div class="small">Tip: <span class="kbd">R</span> roll · <span class="kbd">C</span> copy · <span class="kbd">X</span> clear. Results are stored locally in your browser.</div>
+        </div>
+    </footer>
+</body>
+
+</html>

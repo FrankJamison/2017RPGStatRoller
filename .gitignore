@@ -1,0 +1,12 @@
+.vscode/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+
+# Optional local tooling
+node_modules/
