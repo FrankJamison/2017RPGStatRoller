@@ -171,11 +171,8 @@
             var minPointBuy = points; // Minimum Point Buy
             var statsArray = []; // Final Stat Array
             var curStatPoints = 0; // Current Stat Points
-            var attempts = 0;
 
             while (curStatPoints < minPointBuy) {
-                attempts += 1;
-
                 // Reset for a clean attempt
                 statsArray = [];
                 var lowestStat = 19; // Lowest Stat
@@ -208,7 +205,6 @@
                 window.StatRollerUI.showResult({
                     stats: statsArray,
                     pointBuy: curStatPoints,
-                    attempts: attempts,
                     ms: elapsed,
                     variant: "Caedi's Cauldron (Min 50)"
                 });
